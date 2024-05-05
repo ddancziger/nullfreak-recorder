@@ -90,7 +90,7 @@ export default class EventListener {
   private handlePageLoad(): void {
     // TODO NOT SENDING
     const pageLoadData = {
-      eventType: "PAGE_LOAD",
+      eventType: "pageLoad",
       timestamp: new Date().toISOString(),
       pageUrl: window.location.href,
       tagName: null,
