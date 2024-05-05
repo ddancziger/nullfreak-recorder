@@ -27,30 +27,39 @@ function getUserId() {
 
 window.nullRecorder = function (config: EventListenerConfig) {
   config = {
+    ...config,
     sessionId: getSessionId(),
     userId: getUserId(),
   };
-  // config.sessionId = '1'; //getSessionId(); // Set session ID from storage or generate
-  // config.userId = '1'; //getUserId();
-  const listener = new EventListener(config, (eventData) => {
-    // This is where the event data will be sent or logged
-    // Send event data
-    try {
-      fetch(
-        "https://5t7od3yw9g.execute-api.eu-west-2.amazonaws.com/dev/event",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            // Authorization: `Bearer ${this.config.apiKey}`,
-          },
-          body: JSON.stringify(eventData),
-        }
-      );
-    } catch (error) {
-      console.log(error);
+  const listener = new EventListener(config, (eventsData) => {
+    if (!config.apiKey) {
+      console.error("Missing apiKey");
+      return;
     }
-    console.log("Data Sent:", eventData);
+    fetch(
+      "https://ohzzb0pmv7.execute-api.eu-west-2.amazonaws.com/prod/events",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": config.apiKey,
+          // Authorization: `Bearer ${this.config.apiKey}`,
+        },
+        body: JSON.stringify(eventsData),
+      }
+    )
+      .then((response) => {
+        if (!response.ok) {
+          return;
+        }
+        return response.json(); // or response.text() if the response is not in JSON format
+      })
+      .then((data) => {
+        return;
+      })
+      .catch((error) => {
+        return;
+      });
   });
   listener.init();
 };

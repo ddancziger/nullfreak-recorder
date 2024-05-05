@@ -1,5 +1,5 @@
 {
-  "name": "nullfreakrecorder",
+  "name": "nullfreak-recorder",
   "version": "1.0.0",
   "description": "",
   "main": "freakrecorder.tsx",
@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "serverless-s3-sync": "^3.3.0",
     "ts-loader": "^9.5.1",
     "typescript": "^5.4.5",
     "webpack": "^5.91.0",

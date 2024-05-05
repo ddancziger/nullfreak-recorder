@@ -1,0 +1,37 @@
+service: nullfreak-recorder
+
+plugins:
+  - serverless-s3-sync
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: us-east-1
+
+custom:
+  s3Sync:
+    - bucketName: script.nullfreak.com
+      localDir: dist/
+# resources:
+#   Resources:
+#     MyBucket:
+#       Type: "AWS::S3::Bucket"
+#       Properties:
+#         BucketName: recorder.nullfreak.com
+#         WebsiteConfiguration:
+#           IndexDocument: index.html
+#           ErrorDocument: error.html
+
+#     BucketPolicy:
+#       Type: "AWS::S3::BucketPolicy"
+#       Properties:
+#         Bucket:
+#           Ref: MyBucket
+#         PolicyDocument:
+#           Statement:
+#             - Sid: PublicReadGetObject
+#               Effect: Allow
+#               Principal: "*"
+#               Action: "s3:GetObject"
+#               Resource:
+#                 Fn::Join: ["", ["arn:aws:s3:::", { "Ref": "MyBucket" }, "/*"]]
