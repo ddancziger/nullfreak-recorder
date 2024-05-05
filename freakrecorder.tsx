@@ -33,7 +33,7 @@ window.nullRecorder = function (config: EventListenerConfig) {
   };
   const listener = new EventListener(config, (eventsData) => {
     if (!config.apiKey) {
-      console.error("Missing apiKey");
+      console.error("Nullfreak: Missing apiKey");
       return;
     }
     fetch(
@@ -43,7 +43,6 @@ window.nullRecorder = function (config: EventListenerConfig) {
         headers: {
           "Content-Type": "application/json",
           "x-api-key": config.apiKey,
-          // Authorization: `Bearer ${this.config.apiKey}`,
         },
         body: JSON.stringify(eventsData),
       }
@@ -52,7 +51,7 @@ window.nullRecorder = function (config: EventListenerConfig) {
         if (!response.ok) {
           return;
         }
-        return response.json(); // or response.text() if the response is not in JSON format
+        return response.json();
       })
       .then((data) => {
         return;

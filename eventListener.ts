@@ -81,9 +81,7 @@ export default class EventListener {
   }
 
   private handelBeforeUnload(): void {
-    console.log("leaving the page!!");
     if (this.lastEvent) {
-      console.log("sending event from beforeunload");
       this.eventQueue.push(this.lastEvent);
     }
   }
@@ -95,7 +93,7 @@ export default class EventListener {
       pageUrl: window.location.href,
       tagName: null,
       attributes: {},
-      textContent: "", // Capture the URL at load time
+      textContent: "",
     };
 
     this.eventQueue.push(pageLoadData);
@@ -123,22 +121,6 @@ export default class EventListener {
       });
 
       if (this.lastEvent && this.lastEvent.eventType !== eventData.eventType) {
-        // console.log(`${targetElement.tagName} send last input event`);
-        // let doc;
-        // if (
-        //   "class" in this.lastEvent.attributes &&
-        //   this.lastEvent.attributes["class"]
-        // ) {
-        //   doc = document.getElementsByClassName(
-        //     this.lastEvent.attributes["class"]
-        //   );
-        // } else if (
-        //   "id" in this.lastEvent.attributes &&
-        //   this.lastEvent.attributes["id"]
-        // ) {
-        //   doc = document.getElementById(this.lastEvent.attributes["id"]);
-        // }
-        // console.log("handeling last event", doc);
         this.sendEvent(this.lastEvent);
         this.lastEvent = null;
       }
@@ -172,7 +154,6 @@ export default class EventListener {
   }
 
   private extractEventData(event: Event, element: HTMLElement) {
-    const sensitiveTags = ["INPUT", "TEXTAREA"];
     let attributes = this.getElementAttributes(element);
     // Dynamically redact sensitive attributes based on their content
     Object.keys(attributes).forEach((attr) => {
