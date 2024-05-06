@@ -23,9 +23,7 @@ import { nullRecorder } from 'nullfreak';
 // Configuration settings for nullRecorder
 const config = {
   companyId: 'your-company-id',
-  apiKey: 'your-api-key',
-  additionalInteractableTags: ['SPAN', 'IMG'], // Additional tags you might want to track
-  interactableAttribute: 'data-interactable' // Custom attribute to mark interactable elements
+  apiKey: 'your-api-key'
 };
 
 // Initialize nullRecorder with the provided configuration
