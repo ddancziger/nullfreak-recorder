@@ -19,7 +19,7 @@ npm install nullfreak-recorder
 ## Usage
 
 ```bash
-import { nullRecorder } from 'nullfreak';
+import { nullRecorder } from 'nullfreak-recorder';;
 
 // Configuration settings for nullRecorder
 const config = {
@@ -35,7 +35,7 @@ nullRecorder(config);
 
 ```bash
 import React, { useEffect } from 'react';
-import { nullRecorder } from 'nullfreak-recorder';;
+import { nullRecorder } from 'nullfreak-recorder';
 
 const App = () => {
   useEffect(() => {
@@ -71,7 +71,7 @@ export default App;
 ```bash
 // pages/_app.js
 import { useEffect } from 'react';
-import { nullRecorder } from 'nullfreak-recorder';;
+import { nullRecorder } from 'nullfreak-recorder';
 
 function MyApp({ Component, pageProps }) {
   useEffect(() => {
