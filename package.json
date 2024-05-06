@@ -4,9 +4,14 @@
   "description": "",
   "main": "freakrecorder.tsx",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack --config webpack.config.js"
+    "build": "tsc",
+    "prepublishOnly": "npm run build",
+    "publish": "npm publish",
+    "patch": "npm version patch && npm run publish",
+    "minor": "npm version minor && npm run publish",
+    "major": "npm version major && npm run publish"
   },
+
   "repository": {
     "type": "git",
     "url": "https://github.com/ddancziger/nullfreak-recorder.git"
@@ -18,7 +23,7 @@
   },
   "url": {
     "url": "https://github.com/ddancziger/nullfreak-recorder"
-  }
+  },
   "devDependencies": {
     "serverless-s3-sync": "^3.3.0",
     "ts-loader": "^9.5.1",
