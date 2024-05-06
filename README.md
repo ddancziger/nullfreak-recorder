@@ -29,3 +29,64 @@ const config = {
 // Initialize nullRecorder with the provided configuration
 nullRecorder(config).init();
 ```
+
+## Example ReactJS
+
+```bash
+import React, { useEffect } from 'react';
+import { nullRecorder } from 'nullfreak';
+
+const App = () => {
+  useEffect(() => {
+    // Configuration settings
+    const config = {
+      companyId: 'your-company-id',
+      apiKey: 'your-api-key'
+    };
+
+    // Initialize nullRecorder on component mount
+    nullRecorder(config);
+    nullRecorder.init();
+
+    // Optional cleanup if needed on component unmount
+    return () => {
+      // Cleanup logic here
+    };
+  }, []);
+
+  return (
+    <div>
+      <h1>Welcome to Our Application</h1>
+      {/* Your application components go here */}
+    </div>
+  );
+};
+
+export default App;
+```
+
+## Example NextJs
+```bash
+// pages/_app.js
+import { useEffect } from 'react';
+import { nullRecorder } from 'nullfreak';
+
+function MyApp({ Component, pageProps }) {
+  useEffect(() => {
+    if (typeof window !== "undefined") { // Ensures the code runs only in the browser
+      const config = {
+        companyId: 'your-company-id',
+        apiKey: 'your-api-key',
+        // Add any additional configuration needed
+      };
+
+      nullRecorder(config);
+      nullRecorder.init();
+    }
+  }, []);
+
+  return <Component {...pageProps} />
+}
+
+export default MyApp;
+```
