@@ -37,7 +37,7 @@ window.nullRecorder = function (config: EventListenerConfig) {
       return;
     }
     fetch(
-      "https://ohzzb0pmv7.execute-api.eu-west-2.amazonaws.com/prod/events",
+      `https://ohzzb0pmv7.execute-api.eu-west-2.amazonaws.com/prod/events/${config.companyId}`,
       {
         method: "POST",
         headers: {

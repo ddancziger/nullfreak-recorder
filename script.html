@@ -1,0 +1,71 @@
+<html>
+  <head>
+    <script>
+      // Function to load script dynamically
+      function loadScript(url, callback) {
+        var script = document.createElement("script");
+        script.type = "text/javascript";
+        script.src = url;
+
+        // Bind the event to the callback function.
+        // There are several events for cross browser compatibility.
+        script.onreadystatechange = callback;
+        script.onload = callback;
+
+        // Append the script to the 'head' for processing
+        document.head.appendChild(script);
+      }
+
+      // Callback function to run after the script is loaded
+      function initScript() {
+        if (window.nullRecorder) {
+          // Define the configuration parameters
+          const config = {
+            companyId: "e81a29ec-104d-4b23-b35b-250699ee3bb2",
+            apiKey: "D7tVuoYVP5IomEoLSSx68yTygLxtt2JfnfKZaK80",
+          };
+
+          // Initialize the nullRecorder with the configuration
+          window.nullRecorder(config);
+        } else {
+          console.error("nullRecorder function not available.");
+        }
+      }
+
+      // URL of the external JavaScript file
+      var scriptUrl =
+        "https://s3.eu-west-2.amazonaws.com/script.nullfreak.com/freakrecorder.min.js";
+
+      // Load the script and initialize it
+      loadScript(scriptUrl, initScript);
+    </script>
+  </head>
+  <body>
+    <h1>Registration Form</h1>
+    <form action="" method="POST">
+      <div>
+        <label for="name">Name:</label>
+        <input
+          type="text"
+          id="name"
+          name="name"
+          placeholder="Enter your name"
+          required
+        />
+      </div>
+      <div>
+        <label for="email">Email:</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          placeholder="Enter your email"
+          required
+        />
+      </div>
+      <div>
+        <button type="submit">Submit</button>
+      </div>
+    </form>
+  </body>
+</html>

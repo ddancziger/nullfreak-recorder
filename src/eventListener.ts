@@ -1,6 +1,7 @@
 export interface EventListenerConfig {
+  companyId: string;
   endpoint?: string;
-  apiKey?: string;
+  apiKey: string;
   additionalInteractableTags?: string[];
   interactableAttribute?: string; // Custom attribute to mark interactable elements
   sessionId: string; // Now handled internally
@@ -14,7 +15,6 @@ const observer = new MutationObserver((mutations) => {
   const now = Date.now();
   if (now - lastInteractionTime <= 1000 && mutations.length > 0) {
     // Check for changes within 1 second of interaction
-    console.log("Mutations", mutations);
     domChangedAfterInteraction = true;
     observer.disconnect(); // Optionally disconnect after detecting changes
   }
@@ -86,10 +86,9 @@ export default class EventListener {
     }
   }
   private handlePageLoad(): void {
-    // TODO NOT SENDING
     const pageLoadData = {
       eventType: "pageLoad",
-      timestamp: new Date().toISOString(),
+      timestamp: Date.now(),
       pageUrl: window.location.href,
       tagName: null,
       attributes: {},
@@ -149,7 +148,7 @@ export default class EventListener {
           this.sendEvent(this.lastEvent);
           this.lastEvent = null;
         }
-      }, 7000);
+      }, 15000);
     }
   }
 
@@ -169,7 +168,7 @@ export default class EventListener {
 
     const eventData = {
       eventType: event.type,
-      timestamp: new Date().toUTCString(),
+      timestamp: Date.now(),
       tagName: element.tagName,
       attributes: attributes,
       textContent: element.textContent?.trim(),

@@ -1,6 +1,7 @@
 export interface EventListenerConfig {
+    companyId: string;
     endpoint?: string;
-    apiKey?: string;
+    apiKey: string;
     additionalInteractableTags?: string[];
     interactableAttribute?: string;
     sessionId: string;

@@ -7,8 +7,18 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack --config webpack.config.js"
   },
-  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ddancziger/nullfreak-recorder.git"
+  },
+  "author": "nullfreak",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ddancziger/nullfreak-recorder/issues"
+  },
+  "url": {
+    "url": "https://github.com/ddancziger/nullfreak-recorder"
+  }
   "devDependencies": {
     "serverless-s3-sync": "^3.3.0",
     "ts-loader": "^9.5.1",
