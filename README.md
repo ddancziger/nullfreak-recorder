@@ -19,7 +19,7 @@ npm install nullfreak-recorder
 ## Usage
 
 ```bash
-import { nullRecorder } from 'nullfreak-recorder';;
+import { nullRecorder } from 'nullfreak-recorder';
 
 // Configuration settings for nullRecorder
 const config = {
@@ -47,7 +47,6 @@ const App = () => {
 
     // Initialize nullRecorder on component mount
     nullRecorder(config);
-    nullRecorder.init();
 
     // Optional cleanup if needed on component unmount
     return () => {
@@ -83,7 +82,6 @@ function MyApp({ Component, pageProps }) {
       };
 
       nullRecorder(config);
-      nullRecorder.init();
     }
   }, []);
 
