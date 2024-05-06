@@ -14,6 +14,7 @@ Install `nullfreak` using npm:
 
 ```bash
 npm install nullfreak
+```
 
 ## Usage
 ```bash
@@ -29,3 +30,4 @@ const config = {
 
 // Initialize nullRecorder with the provided configuration
 nullRecorder(config).init();
+```
