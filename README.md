@@ -13,10 +13,11 @@
 Install `nullfreak` using npm:
 
 ```bash
-npm install nullfreak
+npm install nullfreak-recorder
 ```
 
 ## Usage
+
 ```bash
 import { nullRecorder } from 'nullfreak';
 
@@ -27,14 +28,14 @@ const config = {
 };
 
 // Initialize nullRecorder with the provided configuration
-nullRecorder(config).init();
+nullRecorder(config);
 ```
 
 ## Example ReactJS
 
 ```bash
 import React, { useEffect } from 'react';
-import { nullRecorder } from 'nullfreak';
+import { nullRecorder } from 'nullfreak-recorder';;
 
 const App = () => {
   useEffect(() => {
@@ -66,10 +67,11 @@ export default App;
 ```
 
 ## Example NextJs
+
 ```bash
 // pages/_app.js
 import { useEffect } from 'react';
-import { nullRecorder } from 'nullfreak';
+import { nullRecorder } from 'nullfreak-recorder';;
 
 function MyApp({ Component, pageProps }) {
   useEffect(() => {
