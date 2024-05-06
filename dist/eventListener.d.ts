@@ -24,11 +24,10 @@ export default class EventListener {
     private handelBeforeUnload;
     private handlePageLoad;
     private sendEvent;
+    private checkIfParentHasInteractableChild;
     private handleEvent;
     private extractEventData;
-    private isEmail;
-    private isPhoneNumber;
-    private isCreditCardNumber;
+    private checkIfIsPIIDataAndClean;
     private findInteractableParent;
     private isInteractable;
     private getElementAttributes;

@@ -104,6 +104,17 @@ export default class EventListener {
       this.flushEventQueue();
     }
   }
+
+  private checkIfParentHasInteractableChild(
+    childs: NodeListOf<ChildNode>
+  ): boolean {
+    for (const child of childs) {
+      if (child.nodeName === "INPUT") {
+        return true;
+      }
+    }
+    return false;
+  }
   private handleEvent(event: Event): void {
     let targetElement = event.target as HTMLElement;
     targetElement = this.findInteractableParent(targetElement);
@@ -125,7 +136,11 @@ export default class EventListener {
       }
       setTimeout(() => {
         if (this.isInteractable(targetElement)) {
-          if (targetElement.tagName === "DIV" && domChangedAfterInteraction) {
+          if (
+            targetElement.tagName === "DIV" &&
+            domChangedAfterInteraction &&
+            !this.checkIfParentHasInteractableChild(targetElement.childNodes)
+          ) {
             this.eventQueue.push(eventData);
           } else if (
             event.type === "input" &&
@@ -154,15 +169,31 @@ export default class EventListener {
 
   private extractEventData(event: Event, element: HTMLElement) {
     let attributes = this.getElementAttributes(element);
+    let attributes_parent = this.getElementAttributes(
+      element.parentNode.parentElement
+    );
+    let attributes_parent_parent = this.getElementAttributes(
+      element.parentNode.parentElement.parentNode.parentElement
+    );
     // Dynamically redact sensitive attributes based on their content
     Object.keys(attributes).forEach((attr) => {
-      const value = attributes[attr];
-      if (this.isEmail(value)) {
-        attributes[attr] = "redacted-email";
-      } else if (this.isPhoneNumber(value)) {
-        attributes[attr] = "redacted-phone";
-      } else if (this.isCreditCardNumber(value)) {
-        attributes[attr] = "redacted-cc";
+      if (attr === "value") {
+        const value = attributes[attr];
+        attributes[attr] = this.checkIfIsPIIDataAndClean(value);
+      }
+    });
+
+    Object.keys(attributes_parent).forEach((attr) => {
+      if (attr === "value") {
+        const value = attributes_parent[attr];
+        attributes_parent[attr] = this.checkIfIsPIIDataAndClean(value);
+      }
+    });
+
+    Object.keys(attributes_parent_parent).forEach((attr) => {
+      if (attr === "value") {
+        const value = attributes_parent_parent[attr];
+        attributes_parent_parent[attr] = this.checkIfIsPIIDataAndClean(value);
       }
     });
 
@@ -171,28 +202,60 @@ export default class EventListener {
       timestamp: Date.now(),
       tagName: element.tagName,
       attributes: attributes,
-      textContent: element.textContent?.trim(),
+      textContent: this.checkIfIsPIIDataAndClean(element.textContent?.trim()),
       pageUrl: window.location.href,
       sessionId: this.config.sessionId,
       userId: this.config.userId,
+      parent: {
+        tagName: element.parentNode.parentElement.tagName,
+        attributes: attributes_parent,
+        textContent: this.checkIfIsPIIDataAndClean(
+          element.parentNode.parentElement.textContent?.trim()
+        ),
+      },
+      parentOfParent: {
+        tagName:
+          element.parentNode.parentElement.parentNode.parentElement.tagName,
+        attributes: attributes_parent_parent,
+        textContent: this.checkIfIsPIIDataAndClean(
+          element.parentNode.parentElement.parentNode.parentElement.textContent?.trim()
+        ),
+      },
     };
     return eventData;
   }
 
-  private isEmail(value: string): boolean {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-  }
+  private checkIfIsPIIDataAndClean(data: any): string {
+    let value = data;
+    const creditCardRegex =
+      /^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|3[47][0-9]{13}|6(?:011|5[0-9]{2})[0-9]{12})$/;
 
-  private isPhoneNumber(value: string): boolean {
-    // Simple pattern for demonstration; consider more robust patterns for real applications
-    return /(?:\+?(\d{1,3}))?[-.\s]?(?:\((\d{1,4})\)|(\d{1,4}))?[-.\s]?(\d{1,4})[-.\s]?(\d{1,4})[-.\s]?(\d{1,9})/.test(
-      value.replace(/\D/g, "")
-    ); // Checks for strings of digits, ignoring non-digit characters
-  }
-
-  private isCreditCardNumber(value: string): boolean {
-    // Basic check for 13 to 16 digits typical for credit cards
-    return /\b\d{13,16}\b/.test(value.replace(/\D/g, ""));
+    const fullNameRegex = /^[a-zA-Z]+(?: [a-zA-Z]+)+$/;
+    const ssnRegex = /^\d{3}-\d{2}-\d{4}$/;
+    const phoneNumberRegex =
+      /(?:\+?(\d{1,3}))?[-.\s]?(?:\((\d{1,4})\)|(\d{1,4}))?[-.\s]?(\d{1,4})[-.\s]?(\d{1,4})[-.\s]?(\d{1,9})/;
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    const dobRegex = /^\d{4}-\d{2}-\d{2}$/;
+    const addressRegex = /^[a-zA-Z0-9\s\-\#\.]+$/;
+    const passportRegex = /^[A-Z0-9]+$/;
+    if (creditCardRegex.test(data)) {
+      value = "redacted-cc";
+    } else if (fullNameRegex.test(data)) {
+      value = "redacted-name";
+    } else if (ssnRegex.test(data)) {
+      value = "redacted-ssn";
+    } else if (phoneNumberRegex.test(data)) {
+      value = "redacted-phone";
+    } else if (emailRegex.test(data)) {
+      value = "redacted-email";
+    } else if (dobRegex.test(data)) {
+      value = "redacted-dob";
+    } else if (addressRegex.test(data)) {
+      value = "redacted-address";
+    } else if (passportRegex.test(data)) {
+      value = "redacted-passport";
+    }
+    return value;
   }
 
   private findInteractableParent(element: HTMLElement): HTMLElement {
@@ -229,7 +292,17 @@ export default class EventListener {
   }
 
   private getElementAttributes(element: HTMLElement): Record<string, string> {
-    const blacklist = ["data-email", "data-cc-number"];
+    const blacklist = [
+      "data-email",
+      "data-cc-number",
+      "data-social-security-number",
+      "data-account-number",
+      "data-gender",
+      "data-birth-date",
+      "data-birth-date",
+      "data-birth-date",
+      "data-full-name",
+    ];
     return Array.from(element.attributes).reduce((attrs, attr) => {
       if (!blacklist.includes(attr.name)) {
         attrs[attr.name] = attr.value;
