@@ -2,7 +2,8 @@
   "name": "nullfreak-recorder",
   "version": "1.0.2",
   "description": "",
-  "main": "freakrecorder.tsx",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
     "prepublishOnly": "npm run build",
