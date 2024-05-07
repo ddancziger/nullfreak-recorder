@@ -2,9 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useNullRecorder = void 0;
 const react_1 = require("react");
+let loadRecorder = null;
 const useNullRecorder = (config) => {
     (0, react_1.useEffect)(() => {
-        let loadRecorder = null;
         if (!loadRecorder) {
             loadRecorder = async () => {
                 console.log("Starting recorder");

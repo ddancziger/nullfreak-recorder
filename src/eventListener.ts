@@ -147,7 +147,6 @@ class EventListener {
       });
 
       if (this.lastEvent && this.lastEvent.eventType !== eventData.eventType) {
-        console.log("sendign event from last event");
         this.sendEvent(this.lastEvent);
         this.lastEvent = null;
       }
@@ -168,7 +167,6 @@ class EventListener {
             !["DIV"].includes(targetElement.tagName) &&
             event.type != "input"
           ) {
-            console.log("sendign event from not div not input timeouut");
             this.sendEvent(eventData);
           }
         }
@@ -178,7 +176,6 @@ class EventListener {
       clearTimeout(this.debounceTimer);
       this.debounceTimer = setTimeout(() => {
         if (this.lastEvent) {
-          console.log("sendign event from debouncer Timer last event");
           this.sendEvent(this.lastEvent);
           this.lastEvent = null;
         }

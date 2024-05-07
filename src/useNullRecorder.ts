@@ -7,7 +7,6 @@ export const useNullRecorder = (config: {
   useEffect(() => {
     if (!loadRecorder) {
       loadRecorder = async () => {
-        console.log("Starting recorder");
         const { nullRecorder } = await import("./recorder");
         nullRecorder(config);
       };
