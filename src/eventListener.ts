@@ -125,14 +125,14 @@ class EventListener {
     childs: NodeListOf<ChildNode>
   ): boolean {
     for (const child of childs) {
-      if (child.nodeName === "INPUT") {
+      if (child?.nodeName === "INPUT") {
         return true;
       }
     }
     return false;
   }
   private handleEvent(event: Event): void {
-    let targetElement = event.target as HTMLElement;
+    let targetElement = event?.target as HTMLElement;
     targetElement = this.findInteractableParent(targetElement);
 
     if (targetElement) {
@@ -217,7 +217,7 @@ class EventListener {
     });
 
     const eventData = {
-      eventType: event.type,
+      eventType: event?.type,
       timestamp: Date.now(),
       tagName: element?.tagName ?? null,
       attributes: attributes,
@@ -231,7 +231,7 @@ class EventListener {
         tagName: element.parentNode?.parentElement?.tagName ?? null,
         attributes: attributes_parent,
         textContent: this.checkIfIsPIIDataAndClean(
-          element.parentNode.parentElement.textContent?.trim() ?? ""
+          element?.parentNode?.parentElement?.textContent?.trim() ?? ""
         ),
       },
       parentOfParent: {
@@ -263,8 +263,6 @@ class EventListener {
     const passportRegex = /^[A-Z0-9]+$/;
     if (creditCardRegex.test(data)) {
       value = "redacted-cc";
-    } else if (fullNameRegex.test(data)) {
-      value = "redacted-name";
     } else if (ssnRegex.test(data)) {
       value = "redacted-ssn";
     } else if (phoneNumberRegex.test(data)) {
@@ -275,8 +273,6 @@ class EventListener {
       value = "redacted-dob";
     } else if (addressRegex.test(data)) {
       value = "redacted-address";
-    } else if (passportRegex.test(data)) {
-      value = "redacted-passport";
     }
     return value;
   }

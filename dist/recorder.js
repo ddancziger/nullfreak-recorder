@@ -9,7 +9,7 @@ function getSessionId() {
     let sessionId = sessionStorage.getItem("sessionId");
     if (!sessionId) {
         sessionId = "sess-" + Math.random().toString(36).substr(2, 9);
-        sessionStorage.setItem("sessionId", sessionId);
+        sessionStorage === null || sessionStorage === void 0 ? void 0 : sessionStorage.setItem("sessionId", sessionId);
     }
     return sessionId;
 }
@@ -17,10 +17,10 @@ function getUserId() {
     if (typeof window === "undefined") {
         return "server-user";
     }
-    let userId = localStorage.getItem("userId");
+    let userId = localStorage === null || localStorage === void 0 ? void 0 : localStorage.getItem("userId");
     if (!userId) {
         userId = "user-" + Math.random().toString(36).substr(2, 9);
-        localStorage.setItem("userId", userId);
+        localStorage === null || localStorage === void 0 ? void 0 : localStorage.setItem("userId", userId);
     }
     return userId;
 }
@@ -30,7 +30,7 @@ function nullRecorder(config) {
     }
     const completeConfig = Object.assign(Object.assign({}, config), { sessionId: getSessionId(), userId: getUserId() });
     const listener = eventListener_1.EventListener.getInstance(completeConfig, (eventsData) => {
-        if (!completeConfig.apiKey) {
+        if (!(completeConfig === null || completeConfig === void 0 ? void 0 : completeConfig.apiKey)) {
             console.error("Nullfreak: Missing apiKey");
             return;
         }
