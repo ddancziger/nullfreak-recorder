@@ -7,7 +7,7 @@ export interface EventListenerConfig {
     sessionId: string;
     userId: string;
 }
-export default class EventListener {
+export declare class EventListener {
     private config;
     private sendBatchEvents;
     private lastEvent;

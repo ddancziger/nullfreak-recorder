@@ -1,4 +1,4 @@
-import EventListener, { EventListenerConfig } from './EventListener';
+import EventListener, { EventListenerConfig } from "./eventListener";
 declare global {
     interface Window {
         nullRecorder: any;

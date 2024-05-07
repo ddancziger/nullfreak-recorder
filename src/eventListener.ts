@@ -1,4 +1,4 @@
-export interface EventListenerConfig {
+interface EventListenerConfig {
   companyId: string;
   endpoint?: string;
   apiKey: string;
@@ -26,7 +26,7 @@ observer.observe(document.body, {
   subtree: true,
 });
 
-export default class EventListener {
+class EventListener {
   private lastEvent = null;
   private eventQueue: any[] = [];
   private batchTimer: any;
@@ -311,3 +311,5 @@ export default class EventListener {
     }, {} as Record<string, string>);
   }
 }
+
+export { EventListener, EventListenerConfig };

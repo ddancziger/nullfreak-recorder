@@ -19,7 +19,7 @@ function getUserId() {
 }
 window.nullRecorder = function (config) {
     config = Object.assign(Object.assign({}, config), { sessionId: getSessionId(), userId: getUserId() });
-    const listener = new eventListener_1.default(config, (eventsData) => {
+    const listener = new eventListener_1.EventListener(config, (eventsData) => {
         if (!config.apiKey) {
             console.error("Nullfreak: Missing apiKey");
             return;

@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.EventListener = void 0;
 let lastInteractionTime = 0;
 let domChangedAfterInteraction = false;
 const observer = new MutationObserver((mutations) => {
@@ -76,6 +77,14 @@ class EventListener {
             this.flushEventQueue();
         }
     }
+    checkIfParentHasInteractableChild(childs) {
+        for (const child of childs) {
+            if (child.nodeName === "INPUT") {
+                return true;
+            }
+        }
+        return false;
+    }
     handleEvent(event) {
         let targetElement = event.target;
         targetElement = this.findInteractableParent(targetElement);
@@ -94,7 +103,9 @@ class EventListener {
             }
             setTimeout(() => {
                 if (this.isInteractable(targetElement)) {
-                    if (targetElement.tagName === "DIV" && domChangedAfterInteraction) {
+                    if (targetElement.tagName === "DIV" &&
+                        domChangedAfterInteraction &&
+                        !this.checkIfParentHasInteractableChild(targetElement.childNodes)) {
                         this.eventQueue.push(eventData);
                     }
                     else if (event.type === "input" &&
@@ -118,18 +129,26 @@ class EventListener {
         }
     }
     extractEventData(event, element) {
-        var _a;
+        var _a, _b, _c;
         let attributes = this.getElementAttributes(element);
+        let attributes_parent = this.getElementAttributes(element.parentNode.parentElement);
+        let attributes_parent_parent = this.getElementAttributes(element.parentNode.parentElement.parentNode.parentElement);
         Object.keys(attributes).forEach((attr) => {
-            const value = attributes[attr];
-            if (this.isEmail(value)) {
-                attributes[attr] = "redacted-email";
+            if (attr === "value") {
+                const value = attributes[attr];
+                attributes[attr] = this.checkIfIsPIIDataAndClean(value);
             }
-            else if (this.isPhoneNumber(value)) {
-                attributes[attr] = "redacted-phone";
+        });
+        Object.keys(attributes_parent).forEach((attr) => {
+            if (attr === "value") {
+                const value = attributes_parent[attr];
+                attributes_parent[attr] = this.checkIfIsPIIDataAndClean(value);
             }
-            else if (this.isCreditCardNumber(value)) {
-                attributes[attr] = "redacted-cc";
+        });
+        Object.keys(attributes_parent_parent).forEach((attr) => {
+            if (attr === "value") {
+                const value = attributes_parent_parent[attr];
+                attributes_parent_parent[attr] = this.checkIfIsPIIDataAndClean(value);
             }
         });
         const eventData = {
@@ -137,21 +156,58 @@ class EventListener {
             timestamp: Date.now(),
             tagName: element.tagName,
             attributes: attributes,
-            textContent: (_a = element.textContent) === null || _a === void 0 ? void 0 : _a.trim(),
+            textContent: this.checkIfIsPIIDataAndClean((_a = element.textContent) === null || _a === void 0 ? void 0 : _a.trim()),
             pageUrl: window.location.href,
             sessionId: this.config.sessionId,
             userId: this.config.userId,
+            parent: {
+                tagName: element.parentNode.parentElement.tagName,
+                attributes: attributes_parent,
+                textContent: this.checkIfIsPIIDataAndClean((_b = element.parentNode.parentElement.textContent) === null || _b === void 0 ? void 0 : _b.trim()),
+            },
+            parentOfParent: {
+                tagName: element.parentNode.parentElement.parentNode.parentElement.tagName,
+                attributes: attributes_parent_parent,
+                textContent: this.checkIfIsPIIDataAndClean((_c = element.parentNode.parentElement.parentNode.parentElement.textContent) === null || _c === void 0 ? void 0 : _c.trim()),
+            },
         };
         return eventData;
     }
-    isEmail(value) {
-        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-    }
-    isPhoneNumber(value) {
-        return /(?:\+?(\d{1,3}))?[-.\s]?(?:\((\d{1,4})\)|(\d{1,4}))?[-.\s]?(\d{1,4})[-.\s]?(\d{1,4})[-.\s]?(\d{1,9})/.test(value.replace(/\D/g, ""));
-    }
-    isCreditCardNumber(value) {
-        return /\b\d{13,16}\b/.test(value.replace(/\D/g, ""));
+    checkIfIsPIIDataAndClean(data) {
+        let value = data;
+        const creditCardRegex = /^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|3[47][0-9]{13}|6(?:011|5[0-9]{2})[0-9]{12})$/;
+        const fullNameRegex = /^[a-zA-Z]+(?: [a-zA-Z]+)+$/;
+        const ssnRegex = /^\d{3}-\d{2}-\d{4}$/;
+        const phoneNumberRegex = /(?:\+?(\d{1,3}))?[-.\s]?(?:\((\d{1,4})\)|(\d{1,4}))?[-.\s]?(\d{1,4})[-.\s]?(\d{1,4})[-.\s]?(\d{1,9})/;
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        const dobRegex = /^\d{4}-\d{2}-\d{2}$/;
+        const addressRegex = /^[a-zA-Z0-9\s\-\#\.]+$/;
+        const passportRegex = /^[A-Z0-9]+$/;
+        if (creditCardRegex.test(data)) {
+            value = "redacted-cc";
+        }
+        else if (fullNameRegex.test(data)) {
+            value = "redacted-name";
+        }
+        else if (ssnRegex.test(data)) {
+            value = "redacted-ssn";
+        }
+        else if (phoneNumberRegex.test(data)) {
+            value = "redacted-phone";
+        }
+        else if (emailRegex.test(data)) {
+            value = "redacted-email";
+        }
+        else if (dobRegex.test(data)) {
+            value = "redacted-dob";
+        }
+        else if (addressRegex.test(data)) {
+            value = "redacted-address";
+        }
+        else if (passportRegex.test(data)) {
+            value = "redacted-passport";
+        }
+        return value;
     }
     findInteractableParent(element) {
         while (element &&
@@ -176,7 +232,17 @@ class EventListener {
         return false;
     }
     getElementAttributes(element) {
-        const blacklist = ["data-email", "data-cc-number"];
+        const blacklist = [
+            "data-email",
+            "data-cc-number",
+            "data-social-security-number",
+            "data-account-number",
+            "data-gender",
+            "data-birth-date",
+            "data-birth-date",
+            "data-birth-date",
+            "data-full-name",
+        ];
         return Array.from(element.attributes).reduce((attrs, attr) => {
             if (!blacklist.includes(attr.name)) {
                 attrs[attr.name] = attr.value;
@@ -185,5 +251,5 @@ class EventListener {
         }, {});
     }
 }
-exports.default = EventListener;
+exports.EventListener = EventListener;
 //# sourceMappingURL=eventListener.js.map
