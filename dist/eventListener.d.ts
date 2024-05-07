@@ -18,6 +18,7 @@ declare class EventListener {
     private debounceTimer;
     private defaultInteractableTags;
     constructor(config: EventListenerConfig, sendBatchEvents: (events: any[]) => void);
+    private observer;
     private startBatchTimer;
     private flushEventQueue;
     init(): void;

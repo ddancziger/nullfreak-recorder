@@ -1,8 +1,11 @@
 import { EventListenerConfig } from "./eventListener";
 declare global {
     interface Window {
-        nullRecorder: any;
+        nullRecorder?: typeof nullRecorder;
     }
 }
-declare const nullRecorder: (config: any) => void;
+declare function nullRecorder(config: Partial<EventListenerConfig> & {
+    companyId: string;
+    apiKey: string;
+}): void;
 export { nullRecorder, EventListenerConfig };

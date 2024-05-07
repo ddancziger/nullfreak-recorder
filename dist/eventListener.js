@@ -3,18 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.EventListener = void 0;
 let lastInteractionTime = 0;
 let domChangedAfterInteraction = false;
-const observer = new MutationObserver((mutations) => {
-    const now = Date.now();
-    if (now - lastInteractionTime <= 1000 && mutations.length > 0) {
-        domChangedAfterInteraction = true;
-        observer.disconnect();
-    }
-});
-observer.observe(document.body, {
-    childList: true,
-    attributes: true,
-    subtree: true,
-});
 class EventListener {
     constructor(config, sendBatchEvents) {
         this.config = config;
@@ -32,6 +20,17 @@ class EventListener {
             "TEXTAREA",
             "DIV",
         ];
+        this.observer = new MutationObserver((mutations) => {
+            const now = Date.now();
+            if (now - lastInteractionTime <= 1000 && mutations.length > 0) {
+                domChangedAfterInteraction = true;
+                this.observer.disconnect();
+            }
+        });
+        if (typeof window === "undefined") {
+            return;
+        }
+        this.init();
     }
     startBatchTimer() {
         this.batchTimer = setInterval(() => {
@@ -47,6 +46,11 @@ class EventListener {
         }
     }
     init() {
+        this.observer.observe(document.body, {
+            childList: true,
+            attributes: true,
+            subtree: true,
+        });
         const eventsToCapture = ["click", "input", "scroll"];
         eventsToCapture.forEach((eventType) => {
             document.body.addEventListener(eventType, this.handleEvent.bind(this), true);
@@ -92,7 +96,7 @@ class EventListener {
             lastInteractionTime = Date.now();
             domChangedAfterInteraction = false;
             const eventData = this.extractEventData(event, targetElement);
-            observer.observe(document.body, {
+            this.observer.observe(document.body, {
                 childList: true,
                 attributes: true,
                 subtree: true,
@@ -117,7 +121,7 @@ class EventListener {
                         this.sendEvent(eventData);
                     }
                 }
-                observer.disconnect();
+                this.observer.disconnect();
             }, 1000);
             clearTimeout(this.debounceTimer);
             this.debounceTimer = setTimeout(() => {
