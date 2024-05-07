@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EventListener = exports.nullRecorder = void 0;
 const eventListener_1 = require("./eventListener");
-exports.EventListener = eventListener_1.default;
+Object.defineProperty(exports, "EventListener", { enumerable: true, get: function () { return eventListener_1.EventListener; } });
 function getSessionId() {
     let sessionId = sessionStorage.getItem("sessionId");
     if (!sessionId) {
@@ -21,7 +21,7 @@ function getUserId() {
 }
 const nullRecorder = (config) => {
     config = Object.assign(Object.assign({}, config), { sessionId: getSessionId(), userId: getUserId() });
-    const listener = new eventListener_1.default(config, (eventsData) => {
+    const listener = new eventListener_1.EventListener(config, (eventsData) => {
         if (!config.apiKey) {
             console.error("Nullfreak: Missing apiKey");
             return;

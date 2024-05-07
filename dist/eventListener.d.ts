@@ -1,4 +1,4 @@
-export interface EventListenerConfig {
+interface EventListenerConfig {
     companyId: string;
     endpoint?: string;
     apiKey: string;
@@ -7,7 +7,7 @@ export interface EventListenerConfig {
     sessionId: string;
     userId: string;
 }
-export declare class EventListener {
+declare class EventListener {
     private config;
     private sendBatchEvents;
     private lastEvent;
@@ -32,3 +32,4 @@ export declare class EventListener {
     private isInteractable;
     private getElementAttributes;
 }
+export { EventListener, EventListenerConfig };
