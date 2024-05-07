@@ -139,10 +139,13 @@ class EventListener {
         }
     }
     extractEventData(event, element) {
-        var _a, _b, _c;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q;
+        if (!element) {
+            return;
+        }
         let attributes = this.getElementAttributes(element);
-        let attributes_parent = this.getElementAttributes(element.parentNode.parentElement);
-        let attributes_parent_parent = this.getElementAttributes(element.parentNode.parentElement.parentNode.parentElement);
+        let attributes_parent = this.getElementAttributes((_a = element.parentNode) === null || _a === void 0 ? void 0 : _a.parentElement);
+        let attributes_parent_parent = this.getElementAttributes((_d = (_c = (_b = element.parentNode) === null || _b === void 0 ? void 0 : _b.parentElement) === null || _c === void 0 ? void 0 : _c.parentNode) === null || _d === void 0 ? void 0 : _d.parentElement);
         Object.keys(attributes).forEach((attr) => {
             if (attr === "value") {
                 const value = attributes[attr];
@@ -166,19 +169,19 @@ class EventListener {
             timestamp: Date.now(),
             tagName: element.tagName,
             attributes: attributes,
-            textContent: this.checkIfIsPIIDataAndClean((_a = element.textContent) === null || _a === void 0 ? void 0 : _a.trim()),
-            pageUrl: window.location.href,
-            sessionId: this.config.sessionId,
-            userId: this.config.userId,
+            textContent: this.checkIfIsPIIDataAndClean((_e = element.textContent) === null || _e === void 0 ? void 0 : _e.trim()),
+            pageUrl: window === null || window === void 0 ? void 0 : window.location.href,
+            sessionId: (_f = this.config) === null || _f === void 0 ? void 0 : _f.sessionId,
+            userId: (_g = this.config) === null || _g === void 0 ? void 0 : _g.userId,
             parent: {
-                tagName: element.parentNode.parentElement.tagName,
+                tagName: (_k = (_j = (_h = element.parentNode) === null || _h === void 0 ? void 0 : _h.parentElement) === null || _j === void 0 ? void 0 : _j.tagName) !== null && _k !== void 0 ? _k : null,
                 attributes: attributes_parent,
-                textContent: this.checkIfIsPIIDataAndClean((_b = element.parentNode.parentElement.textContent) === null || _b === void 0 ? void 0 : _b.trim()),
+                textContent: this.checkIfIsPIIDataAndClean((_m = (_l = element.parentNode.parentElement.textContent) === null || _l === void 0 ? void 0 : _l.trim()) !== null && _m !== void 0 ? _m : ""),
             },
             parentOfParent: {
-                tagName: element.parentNode.parentElement.parentNode.parentElement.tagName,
+                tagName: (_o = element.parentNode.parentElement.parentNode.parentElement.tagName) !== null && _o !== void 0 ? _o : null,
                 attributes: attributes_parent_parent,
-                textContent: this.checkIfIsPIIDataAndClean((_c = element.parentNode.parentElement.parentNode.parentElement.textContent) === null || _c === void 0 ? void 0 : _c.trim()),
+                textContent: this.checkIfIsPIIDataAndClean((_q = (_p = element.parentNode.parentElement.parentNode.parentElement.textContent) === null || _p === void 0 ? void 0 : _p.trim()) !== null && _q !== void 0 ? _q : ""),
             },
         };
         return eventData;
@@ -220,6 +223,9 @@ class EventListener {
         return value;
     }
     findInteractableParent(element) {
+        if (!element) {
+            return null;
+        }
         while (element &&
             element !== document.body &&
             element !== document.documentElement) {
@@ -231,6 +237,9 @@ class EventListener {
         return null;
     }
     isInteractable(element) {
+        if (!element) {
+            return false;
+        }
         const interactableTags = this.defaultInteractableTags.concat(this.config.additionalInteractableTags || []);
         if (interactableTags.includes(element.tagName)) {
             return true;
@@ -242,6 +251,7 @@ class EventListener {
         return false;
     }
     getElementAttributes(element) {
+        var _a;
         const blacklist = [
             "data-email",
             "data-cc-number",
@@ -253,7 +263,10 @@ class EventListener {
             "data-birth-date",
             "data-full-name",
         ];
-        return Array.from(element.attributes).reduce((attrs, attr) => {
+        if (!element) {
+            return {};
+        }
+        return Array.from((_a = element === null || element === void 0 ? void 0 : element.attributes) !== null && _a !== void 0 ? _a : []).reduce((attrs, attr) => {
             if (!blacklist.includes(attr.name)) {
                 attrs[attr.name] = attr.value;
             }

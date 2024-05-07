@@ -53,7 +53,7 @@ class EventListener {
     if (now - lastInteractionTime <= 1000 && mutations.length > 0) {
       // Check for changes within 1 second of interaction
       domChangedAfterInteraction = true;
-      this.observer.disconnect(); // Optionally disconnect after detecting changes
+      this.observer?.disconnect(); // Optionally disconnect after detecting changes
     }
   });
 
@@ -219,12 +219,14 @@ class EventListener {
     const eventData = {
       eventType: event.type,
       timestamp: Date.now(),
-      tagName: element.tagName,
+      tagName: element?.tagName ?? null,
       attributes: attributes,
-      textContent: this.checkIfIsPIIDataAndClean(element.textContent?.trim()),
-      pageUrl: window?.location.href,
-      sessionId: this.config?.sessionId,
-      userId: this.config?.userId,
+      textContent: this.checkIfIsPIIDataAndClean(
+        element?.textContent?.trim() ?? ""
+      ),
+      pageUrl: window?.location?.href ?? "",
+      sessionId: this.config?.sessionId ?? "",
+      userId: this.config?.userId ?? "",
       parent: {
         tagName: element.parentNode?.parentElement?.tagName ?? null,
         attributes: attributes_parent,
@@ -234,11 +236,11 @@ class EventListener {
       },
       parentOfParent: {
         tagName:
-          element.parentNode.parentElement.parentNode.parentElement.tagName ??
-          null,
+          element?.parentNode?.parentElement?.parentNode?.parentElement
+            ?.tagName ?? null,
         attributes: attributes_parent_parent,
         textContent: this.checkIfIsPIIDataAndClean(
-          element.parentNode.parentElement.parentNode.parentElement.textContent?.trim() ??
+          element?.parentNode?.parentElement?.parentNode?.parentElement?.textContent?.trim() ??
             ""
         ),
       },
@@ -286,13 +288,13 @@ class EventListener {
     // Start at the current element and move up the DOM tree
     while (
       element &&
-      element !== document.body &&
-      element !== document.documentElement
+      element !== document?.body &&
+      element !== document?.documentElement
     ) {
       if (this.isInteractable(element)) {
         return element;
       }
-      element = element.parentElement as HTMLElement;
+      element = element?.parentElement as HTMLElement;
     }
     return null; // Return null if no interactable parent is found
   }
@@ -310,7 +312,7 @@ class EventListener {
 
     if (
       this.config.interactableAttribute &&
-      element.hasAttribute(this.config.interactableAttribute)
+      element?.hasAttribute(this.config.interactableAttribute)
     ) {
       return true;
     }
@@ -334,8 +336,8 @@ class EventListener {
       return {};
     }
     return Array.from(element?.attributes ?? []).reduce((attrs, attr) => {
-      if (!blacklist.includes(attr.name)) {
-        attrs[attr.name] = attr.value;
+      if (!blacklist.includes(attr?.name)) {
+        attrs[attr.name] = attr?.value ?? "";
       }
       return attrs;
     }, {} as Record<string, string>);

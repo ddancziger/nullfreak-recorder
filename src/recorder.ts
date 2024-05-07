@@ -17,7 +17,7 @@ function getSessionId(): string {
   let sessionId = sessionStorage.getItem("sessionId");
   if (!sessionId) {
     sessionId = "sess-" + Math.random().toString(36).substr(2, 9);
-    sessionStorage.setItem("sessionId", sessionId);
+    sessionStorage?.setItem("sessionId", sessionId);
   }
   return sessionId;
 }
@@ -27,10 +27,10 @@ function getUserId(): string {
   if (typeof window === "undefined") {
     return "server-user";
   }
-  let userId = localStorage.getItem("userId");
+  let userId = localStorage?.getItem("userId");
   if (!userId) {
     userId = "user-" + Math.random().toString(36).substr(2, 9);
-    localStorage.setItem("userId", userId);
+    localStorage?.setItem("userId", userId);
   }
   return userId;
 }
@@ -52,7 +52,7 @@ function nullRecorder(
   };
 
   const listener = EventListener.getInstance(completeConfig, (eventsData) => {
-    if (!completeConfig.apiKey) {
+    if (!completeConfig?.apiKey) {
       console.error("Nullfreak: Missing apiKey");
       return;
     }
