@@ -10,25 +10,10 @@
 
 ## Installation
 
-Install `nullfreak` using npm:
+Install `nullfreak-recorder` using npm:
 
 ```bash
 npm install nullfreak-recorder
-```
-
-## Usage
-
-```bash
-import { nullRecorder } from 'nullfreak-recorder';
-
-// Configuration settings for nullRecorder
-const config = {
-  companyId: 'your-company-id',
-  apiKey: 'your-api-key'
-};
-
-// Initialize nullRecorder with the provided configuration
-nullRecorder(config);
 ```
 
 ## Example ReactJS
@@ -39,14 +24,12 @@ import { nullRecorder } from 'nullfreak-recorder';
 
 const App = () => {
   useEffect(() => {
-    // Configuration settings
-    const config = {
-      companyId: 'your-company-id',
-      apiKey: 'your-api-key'
-    };
 
     // Initialize nullRecorder on component mount
-    nullRecorder(config);
+    nullRecorder({
+      companyId: "",
+      apiKey: ""
+    });
 
     // Optional cleanup if needed on component unmount
     return () => {
@@ -69,21 +52,13 @@ export default App;
 
 ```bash
 // pages/_app.js
-import { useEffect } from 'react';
-import { nullRecorder } from 'nullfreak-recorder';
+import { useNullRecorder } from 'nullfreak-recorder';
 
 function MyApp({ Component, pageProps }) {
-  useEffect(() => {
-    if (typeof window !== "undefined") { // Ensures the code runs only in the browser
-      const config = {
-        companyId: 'your-company-id',
-        apiKey: 'your-api-key',
-        // Add any additional configuration needed
-      };
-
-      nullRecorder(config);
-    }
-  }, []);
+  useNullRecorder({
+    companyId: "",
+    apiKey: "",
+  })
 
   return <Component {...pageProps} />
 }
