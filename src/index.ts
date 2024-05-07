@@ -1,15 +1,19 @@
-// Import dependencies if any
+// index.ts
+
 import { EventListener, EventListenerConfig } from "./eventListener";
 
-// Declare global enhancements or modifications if necessary
+// Declare a global enhancement for the Window object to hold the nullRecorder instance
 declare global {
   interface Window {
-    nullRecorder: any;
+    nullRecorder?: typeof nullRecorder;
   }
 }
 
 // Utility function to get a session ID
-function getSessionId() {
+function getSessionId(): string {
+  if (typeof window === "undefined") {
+    return "server-session";
+  }
   let sessionId = sessionStorage.getItem("sessionId");
   if (!sessionId) {
     sessionId = "sess-" + Math.random().toString(36).substr(2, 9);
@@ -19,7 +23,10 @@ function getSessionId() {
 }
 
 // Utility function to get a user ID
-function getUserId() {
+function getUserId(): string {
+  if (typeof window === "undefined") {
+    return "server-user";
+  }
   let userId = localStorage.getItem("userId");
   if (!userId) {
     userId = "user-" + Math.random().toString(36).substr(2, 9);
@@ -28,50 +35,56 @@ function getUserId() {
   return userId;
 }
 
-// The main function that initializes and configures the event listener
-const nullRecorder = (config) => {
-  config = {
+// Main function to initialize and configure the event listener
+function nullRecorder(
+  config: Partial<EventListenerConfig> & { companyId: string; apiKey: string }
+): void {
+  if (typeof window === "undefined") {
+    // Avoid initializing in server-side environments
+    return;
+  }
+
+  // Configure with session and user IDs
+  const completeConfig: EventListenerConfig = {
     ...config,
     sessionId: getSessionId(),
     userId: getUserId(),
   };
 
-  const listener = new EventListener(config, (eventsData) => {
-    if (!config.apiKey) {
+  const listener = new EventListener(completeConfig, (eventsData) => {
+    if (!completeConfig.apiKey) {
       console.error("Nullfreak: Missing apiKey");
       return;
     }
     fetch(
-      `https://ohzzb0pmv7.execute-api.eu-west-2.amazonaws.com/prod/events/${config.companyId}`,
+      `https://ohzzb0pmv7.execute-api.eu-west-2.amazonaws.com/prod/events/${completeConfig.companyId}`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "x-api-key": config.apiKey,
+          "x-api-key": completeConfig.apiKey,
         },
         body: JSON.stringify(eventsData),
       }
     )
       .then((response) => {
         if (!response.ok) {
+          console.error("Error sending events data:", response.statusText);
           return;
         }
         return response.json();
       })
       .then((data) => {
-        // Handle response data if necessary
+        // Optional: Handle response data
       })
       .catch((error) => {
         console.error("Error sending events data:", error);
       });
   });
-  if (typeof window === "undefined") {
-    // Avoid initializing in server-side environments
-    return;
-  } else {
-    listener.init();
-  }
-};
+
+  // Assign to a global variable for potential reuse in other parts of your app
+  window.nullRecorder = nullRecorder;
+}
 
 // Export relevant functionalities or objects
 export { nullRecorder, EventListenerConfig };

@@ -11,21 +11,6 @@ interface EventListenerConfig {
 let lastInteractionTime = 0;
 let domChangedAfterInteraction = false;
 
-const observer = new MutationObserver((mutations) => {
-  const now = Date.now();
-  if (now - lastInteractionTime <= 1000 && mutations.length > 0) {
-    // Check for changes within 1 second of interaction
-    domChangedAfterInteraction = true;
-    observer.disconnect(); // Optionally disconnect after detecting changes
-  }
-});
-
-observer.observe(document.body, {
-  childList: true,
-  attributes: true,
-  subtree: true,
-});
-
 class EventListener {
   private lastEvent = null;
   private eventQueue: any[] = [];
@@ -44,7 +29,22 @@ class EventListener {
   constructor(
     private config: EventListenerConfig,
     private sendBatchEvents: (events: any[]) => void
-  ) {}
+  ) {
+    if (typeof window === "undefined") {
+      // Avoid initializing in server-side environments
+      return;
+    }
+    this.init();
+  }
+
+  private observer: MutationObserver = new MutationObserver((mutations) => {
+    const now = Date.now();
+    if (now - lastInteractionTime <= 1000 && mutations.length > 0) {
+      // Check for changes within 1 second of interaction
+      domChangedAfterInteraction = true;
+      this.observer.disconnect(); // Optionally disconnect after detecting changes
+    }
+  });
 
   private startBatchTimer(): void {
     this.batchTimer = setInterval(() => {
@@ -62,6 +62,11 @@ class EventListener {
   }
 
   public init(): void {
+    this.observer.observe(document.body, {
+      childList: true,
+      attributes: true,
+      subtree: true,
+    });
     const eventsToCapture = ["click", "input", "scroll"];
     eventsToCapture.forEach((eventType) => {
       document.body.addEventListener(

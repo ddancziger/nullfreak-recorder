@@ -1,8 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.EventListener = exports.nullRecorder = void 0;
+exports.nullRecorder = void 0;
 const eventListener_1 = require("./eventListener");
-Object.defineProperty(exports, "EventListener", { enumerable: true, get: function () { return eventListener_1.EventListener; } });
 function getSessionId() {
     let sessionId = sessionStorage.getItem("sessionId");
     if (!sessionId) {
@@ -46,7 +45,12 @@ const nullRecorder = (config) => {
             console.error("Error sending events data:", error);
         });
     });
-    listener.init();
+    if (typeof window === "undefined") {
+        return;
+    }
+    else {
+        listener.init();
+    }
 };
 exports.nullRecorder = nullRecorder;
 //# sourceMappingURL=index.js.map
