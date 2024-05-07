@@ -1,11 +1,2 @@
-import { EventListenerConfig } from "./eventListener";
-declare global {
-    interface Window {
-        nullRecorder?: typeof nullRecorder;
-    }
-}
-declare function nullRecorder(config: Partial<EventListenerConfig> & {
-    companyId: string;
-    apiKey: string;
-}): void;
-export { nullRecorder, EventListenerConfig };
+export { useNullRecorder } from "./useNullRecorder";
+export { EventListener, EventListenerConfig } from "./eventListener";
