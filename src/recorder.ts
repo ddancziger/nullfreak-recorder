@@ -51,7 +51,7 @@ function nullRecorder(
     userId: getUserId(),
   };
 
-  const listener = new EventListener(completeConfig, (eventsData) => {
+  const listener = EventListener.getInstance(completeConfig, (eventsData) => {
     if (!completeConfig.apiKey) {
       console.error("Nullfreak: Missing apiKey");
       return;
@@ -77,9 +77,7 @@ function nullRecorder(
       .then((data) => {
         // Optional: Handle response data
       })
-      .catch((error) => {
-        console.error("Error sending events data:", error);
-      });
+      .catch((error) => {});
   });
 
   // Assign to a global variable for potential reuse in other parts of your app

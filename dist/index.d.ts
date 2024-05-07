@@ -1,2 +1,3 @@
 export { useNullRecorder } from "./useNullRecorder";
-export { EventListener, EventListenerConfig } from "./eventListener";
+export { EventListenerConfig } from "./eventListener";
+export { nullRecorder } from "./recorder";

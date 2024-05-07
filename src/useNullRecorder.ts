@@ -5,11 +5,15 @@ export const useNullRecorder = (config: {
   apiKey: string;
 }) => {
   useEffect(() => {
-    const loadRecorder = async () => {
-      const { nullRecorder } = await import("./recorder");
-      nullRecorder(config);
-    };
+    let loadRecorder = null;
+    if (!loadRecorder) {
+      loadRecorder = async () => {
+        console.log("Starting recorder");
+        const { nullRecorder } = await import("./recorder");
+        nullRecorder(config);
+      };
 
-    loadRecorder().catch(console.error);
+      loadRecorder().catch(console.error);
+    }
   }, [config]);
 };

@@ -12,6 +12,7 @@ let lastInteractionTime = 0;
 let domChangedAfterInteraction = false;
 
 class EventListener {
+  private static instance: EventListener | null = null;
   private lastEvent = null;
   private eventQueue: any[] = [];
   private batchTimer: any;
@@ -26,7 +27,7 @@ class EventListener {
     "TEXTAREA",
     "DIV",
   ];
-  constructor(
+  private constructor(
     private config: EventListenerConfig,
     private sendBatchEvents: (events: any[]) => void
   ) {
@@ -35,6 +36,16 @@ class EventListener {
       return;
     }
     this.init();
+  }
+
+  public static getInstance(
+    config: EventListenerConfig,
+    sendBatchEvents: (events: any[]) => void
+  ): EventListener {
+    if (!EventListener.instance) {
+      EventListener.instance = new EventListener(config, sendBatchEvents);
+    }
+    return EventListener.instance;
   }
 
   private observer: MutationObserver = new MutationObserver((mutations) => {
@@ -136,6 +147,7 @@ class EventListener {
       });
 
       if (this.lastEvent && this.lastEvent.eventType !== eventData.eventType) {
+        console.log("sendign event from last event");
         this.sendEvent(this.lastEvent);
         this.lastEvent = null;
       }
@@ -156,6 +168,7 @@ class EventListener {
             !["DIV"].includes(targetElement.tagName) &&
             event.type != "input"
           ) {
+            console.log("sendign event from not div not input timeouut");
             this.sendEvent(eventData);
           }
         }
@@ -165,6 +178,7 @@ class EventListener {
       clearTimeout(this.debounceTimer);
       this.debounceTimer = setTimeout(() => {
         if (this.lastEvent) {
+          console.log("sendign event from debouncer Timer last event");
           this.sendEvent(this.lastEvent);
           this.lastEvent = null;
         }
