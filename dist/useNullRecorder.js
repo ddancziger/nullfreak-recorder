@@ -7,7 +7,6 @@ const useNullRecorder = (config) => {
     (0, react_1.useEffect)(() => {
         if (!loadRecorder) {
             loadRecorder = async () => {
-                console.log("Starting recorder");
                 const { nullRecorder } = await Promise.resolve().then(() => require("./recorder"));
                 nullRecorder(config);
             };

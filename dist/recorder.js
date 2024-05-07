@@ -44,7 +44,6 @@ function nullRecorder(config) {
         })
             .then((response) => {
             if (!response.ok) {
-                console.error("Error sending events data:", response.statusText);
                 return;
             }
             return response.json();

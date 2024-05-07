@@ -184,12 +184,15 @@ class EventListener {
   }
 
   private extractEventData(event: Event, element: HTMLElement) {
+    if (!element) {
+      return;
+    }
     let attributes = this.getElementAttributes(element);
     let attributes_parent = this.getElementAttributes(
-      element.parentNode.parentElement
+      element.parentNode?.parentElement
     );
     let attributes_parent_parent = this.getElementAttributes(
-      element.parentNode.parentElement.parentNode.parentElement
+      element.parentNode?.parentElement?.parentNode?.parentElement
     );
     // Dynamically redact sensitive attributes based on their content
     Object.keys(attributes).forEach((attr) => {
@@ -219,22 +222,24 @@ class EventListener {
       tagName: element.tagName,
       attributes: attributes,
       textContent: this.checkIfIsPIIDataAndClean(element.textContent?.trim()),
-      pageUrl: window.location.href,
-      sessionId: this.config.sessionId,
-      userId: this.config.userId,
+      pageUrl: window?.location.href,
+      sessionId: this.config?.sessionId,
+      userId: this.config?.userId,
       parent: {
-        tagName: element.parentNode.parentElement.tagName,
+        tagName: element.parentNode?.parentElement?.tagName ?? null,
         attributes: attributes_parent,
         textContent: this.checkIfIsPIIDataAndClean(
-          element.parentNode.parentElement.textContent?.trim()
+          element.parentNode.parentElement.textContent?.trim() ?? ""
         ),
       },
       parentOfParent: {
         tagName:
-          element.parentNode.parentElement.parentNode.parentElement.tagName,
+          element.parentNode.parentElement.parentNode.parentElement.tagName ??
+          null,
         attributes: attributes_parent_parent,
         textContent: this.checkIfIsPIIDataAndClean(
-          element.parentNode.parentElement.parentNode.parentElement.textContent?.trim()
+          element.parentNode.parentElement.parentNode.parentElement.textContent?.trim() ??
+            ""
         ),
       },
     };
@@ -275,6 +280,9 @@ class EventListener {
   }
 
   private findInteractableParent(element: HTMLElement): HTMLElement {
+    if (!element) {
+      return null;
+    }
     // Start at the current element and move up the DOM tree
     while (
       element &&
@@ -290,6 +298,9 @@ class EventListener {
   }
 
   private isInteractable(element: HTMLElement): boolean {
+    if (!element) {
+      return false;
+    }
     const interactableTags = this.defaultInteractableTags.concat(
       this.config.additionalInteractableTags || []
     );
@@ -319,7 +330,10 @@ class EventListener {
       "data-birth-date",
       "data-full-name",
     ];
-    return Array.from(element.attributes).reduce((attrs, attr) => {
+    if (!element) {
+      return {};
+    }
+    return Array.from(element?.attributes ?? []).reduce((attrs, attr) => {
       if (!blacklist.includes(attr.name)) {
         attrs[attr.name] = attr.value;
       }
