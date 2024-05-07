@@ -65,8 +65,13 @@ const nullRecorder = (config) => {
         console.error("Error sending events data:", error);
       });
   });
-  listener.init();
+  if (typeof window === "undefined") {
+    // Avoid initializing in server-side environments
+    return;
+  } else {
+    listener.init();
+  }
 };
 
 // Export relevant functionalities or objects
-export { nullRecorder, EventListener, EventListenerConfig };
+export { nullRecorder, EventListenerConfig };
