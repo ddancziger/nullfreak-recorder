@@ -10,6 +10,7 @@ interface EventListenerConfig {
 declare class EventListener {
     private config;
     private sendBatchEvents;
+    private static instance;
     private lastEvent;
     private eventQueue;
     private batchTimer;
@@ -17,7 +18,8 @@ declare class EventListener {
     private batchTime;
     private debounceTimer;
     private defaultInteractableTags;
-    constructor(config: EventListenerConfig, sendBatchEvents: (events: any[]) => void);
+    private constructor();
+    static getInstance(config: EventListenerConfig, sendBatchEvents: (events: any[]) => void): EventListener;
     private observer;
     private startBatchTimer;
     private flushEventQueue;

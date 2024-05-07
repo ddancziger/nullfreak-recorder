@@ -29,7 +29,7 @@ function nullRecorder(config) {
         return;
     }
     const completeConfig = Object.assign(Object.assign({}, config), { sessionId: getSessionId(), userId: getUserId() });
-    const listener = new eventListener_1.EventListener(completeConfig, (eventsData) => {
+    const listener = eventListener_1.EventListener.getInstance(completeConfig, (eventsData) => {
         if (!completeConfig.apiKey) {
             console.error("Nullfreak: Missing apiKey");
             return;
@@ -51,9 +51,7 @@ function nullRecorder(config) {
         })
             .then((data) => {
         })
-            .catch((error) => {
-            console.error("Error sending events data:", error);
-        });
+            .catch((error) => { });
     });
     window.nullRecorder = nullRecorder;
 }

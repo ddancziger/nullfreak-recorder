@@ -32,6 +32,12 @@ class EventListener {
         }
         this.init();
     }
+    static getInstance(config, sendBatchEvents) {
+        if (!EventListener.instance) {
+            EventListener.instance = new EventListener(config, sendBatchEvents);
+        }
+        return EventListener.instance;
+    }
     startBatchTimer() {
         this.batchTimer = setInterval(() => {
             if (this.eventQueue.length > 0) {
@@ -102,6 +108,7 @@ class EventListener {
                 subtree: true,
             });
             if (this.lastEvent && this.lastEvent.eventType !== eventData.eventType) {
+                console.log("sendign event from last event");
                 this.sendEvent(this.lastEvent);
                 this.lastEvent = null;
             }
@@ -118,6 +125,7 @@ class EventListener {
                     }
                     else if (!["DIV"].includes(targetElement.tagName) &&
                         event.type != "input") {
+                        console.log("sendign event from not div not input timeouut");
                         this.sendEvent(eventData);
                     }
                 }
@@ -126,6 +134,7 @@ class EventListener {
             clearTimeout(this.debounceTimer);
             this.debounceTimer = setTimeout(() => {
                 if (this.lastEvent) {
+                    console.log("sendign event from debouncer Timer last event");
                     this.sendEvent(this.lastEvent);
                     this.lastEvent = null;
                 }
@@ -256,4 +265,5 @@ class EventListener {
     }
 }
 exports.EventListener = EventListener;
+EventListener.instance = null;
 //# sourceMappingURL=eventListener.js.map
