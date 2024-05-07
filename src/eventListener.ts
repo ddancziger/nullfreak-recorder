@@ -129,7 +129,7 @@ class EventListener {
       domChangedAfterInteraction = false;
       const eventData = this.extractEventData(event, targetElement);
 
-      observer.observe(document.body, {
+      this.observer.observe(document.body, {
         childList: true,
         attributes: true,
         subtree: true,
@@ -159,7 +159,7 @@ class EventListener {
             this.sendEvent(eventData);
           }
         }
-        observer.disconnect();
+        this.observer.disconnect();
       }, 1000);
 
       clearTimeout(this.debounceTimer);
