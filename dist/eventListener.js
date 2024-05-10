@@ -90,14 +90,14 @@ class EventListener {
     }
     checkIfParentHasInteractableChild(childs) {
         for (const child of childs) {
-            if (child.nodeName === "INPUT") {
+            if ((child === null || child === void 0 ? void 0 : child.nodeName) === "INPUT") {
                 return true;
             }
         }
         return false;
     }
     handleEvent(event) {
-        let targetElement = event.target;
+        let targetElement = event === null || event === void 0 ? void 0 : event.target;
         targetElement = this.findInteractableParent(targetElement);
         if (targetElement) {
             lastInteractionTime = Date.now();
@@ -140,7 +140,7 @@ class EventListener {
         }
     }
     extractEventData(event, element) {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2, _3, _4;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2, _3, _4, _5, _6;
         if (!element) {
             return;
         }
@@ -166,7 +166,7 @@ class EventListener {
             }
         });
         const eventData = {
-            eventType: event.type,
+            eventType: event === null || event === void 0 ? void 0 : event.type,
             timestamp: Date.now(),
             tagName: (_e = element === null || element === void 0 ? void 0 : element.tagName) !== null && _e !== void 0 ? _e : null,
             attributes: attributes,
@@ -177,12 +177,12 @@ class EventListener {
             parent: {
                 tagName: (_r = (_q = (_p = element.parentNode) === null || _p === void 0 ? void 0 : _p.parentElement) === null || _q === void 0 ? void 0 : _q.tagName) !== null && _r !== void 0 ? _r : null,
                 attributes: attributes_parent,
-                textContent: this.checkIfIsPIIDataAndClean((_t = (_s = element.parentNode.parentElement.textContent) === null || _s === void 0 ? void 0 : _s.trim()) !== null && _t !== void 0 ? _t : ""),
+                textContent: this.checkIfIsPIIDataAndClean((_v = (_u = (_t = (_s = element === null || element === void 0 ? void 0 : element.parentNode) === null || _s === void 0 ? void 0 : _s.parentElement) === null || _t === void 0 ? void 0 : _t.textContent) === null || _u === void 0 ? void 0 : _u.trim()) !== null && _v !== void 0 ? _v : ""),
             },
             parentOfParent: {
-                tagName: (_y = (_x = (_w = (_v = (_u = element === null || element === void 0 ? void 0 : element.parentNode) === null || _u === void 0 ? void 0 : _u.parentElement) === null || _v === void 0 ? void 0 : _v.parentNode) === null || _w === void 0 ? void 0 : _w.parentElement) === null || _x === void 0 ? void 0 : _x.tagName) !== null && _y !== void 0 ? _y : null,
+                tagName: (_0 = (_z = (_y = (_x = (_w = element === null || element === void 0 ? void 0 : element.parentNode) === null || _w === void 0 ? void 0 : _w.parentElement) === null || _x === void 0 ? void 0 : _x.parentNode) === null || _y === void 0 ? void 0 : _y.parentElement) === null || _z === void 0 ? void 0 : _z.tagName) !== null && _0 !== void 0 ? _0 : null,
                 attributes: attributes_parent_parent,
-                textContent: this.checkIfIsPIIDataAndClean((_4 = (_3 = (_2 = (_1 = (_0 = (_z = element === null || element === void 0 ? void 0 : element.parentNode) === null || _z === void 0 ? void 0 : _z.parentElement) === null || _0 === void 0 ? void 0 : _0.parentNode) === null || _1 === void 0 ? void 0 : _1.parentElement) === null || _2 === void 0 ? void 0 : _2.textContent) === null || _3 === void 0 ? void 0 : _3.trim()) !== null && _4 !== void 0 ? _4 : ""),
+                textContent: this.checkIfIsPIIDataAndClean((_6 = (_5 = (_4 = (_3 = (_2 = (_1 = element === null || element === void 0 ? void 0 : element.parentNode) === null || _1 === void 0 ? void 0 : _1.parentElement) === null || _2 === void 0 ? void 0 : _2.parentNode) === null || _3 === void 0 ? void 0 : _3.parentElement) === null || _4 === void 0 ? void 0 : _4.textContent) === null || _5 === void 0 ? void 0 : _5.trim()) !== null && _6 !== void 0 ? _6 : ""),
             },
         };
         return eventData;
@@ -200,9 +200,6 @@ class EventListener {
         if (creditCardRegex.test(data)) {
             value = "redacted-cc";
         }
-        else if (fullNameRegex.test(data)) {
-            value = "redacted-name";
-        }
         else if (ssnRegex.test(data)) {
             value = "redacted-ssn";
         }
@@ -217,9 +214,6 @@ class EventListener {
         }
         else if (addressRegex.test(data)) {
             value = "redacted-address";
-        }
-        else if (passportRegex.test(data)) {
-            value = "redacted-passport";
         }
         return value;
     }

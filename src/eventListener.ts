@@ -26,13 +26,13 @@ class EventListener {
     "SELECT",
     "TEXTAREA",
     "DIV",
+    "LI", // Include 'LI' as it requires special handling
   ];
   private constructor(
     private config: EventListenerConfig,
     private sendBatchEvents: (events: any[]) => void
   ) {
     if (typeof window === "undefined") {
-      // Avoid initializing in server-side environments
       return;
     }
     this.init();
@@ -51,7 +51,6 @@ class EventListener {
   private observer: MutationObserver = new MutationObserver((mutations) => {
     const now = Date.now();
     if (now - lastInteractionTime <= 1000 && mutations.length > 0) {
-      // Check for changes within 1 second of interaction
       domChangedAfterInteraction = true;
       this.observer?.disconnect(); // Optionally disconnect after detecting changes
     }
@@ -101,6 +100,7 @@ class EventListener {
       this.eventQueue.push(this.lastEvent);
     }
   }
+
   private handlePageLoad(): void {
     const pageLoadData = {
       eventType: "pageLoad",
@@ -109,6 +109,9 @@ class EventListener {
       tagName: null,
       attributes: {},
       textContent: "",
+      htmlSnapshot: document.documentElement.outerHTML,
+      userId: this.config?.userId ?? "",
+      sessionId: this.config?.sessionId ?? "",
     };
 
     this.eventQueue.push(pageLoadData);
@@ -153,14 +156,14 @@ class EventListener {
       setTimeout(() => {
         if (this.isInteractable(targetElement)) {
           if (
-            targetElement.tagName === "DIV" &&
+            targetElement?.tagName === "DIV" &&
             domChangedAfterInteraction &&
             !this.checkIfParentHasInteractableChild(targetElement.childNodes)
           ) {
             this.eventQueue.push(eventData);
           } else if (
-            event.type === "input" &&
-            targetElement.tagName === "INPUT"
+            event?.type === "input" &&
+            targetElement?.tagName === "INPUT"
           ) {
             this.lastEvent = this.extractEventData(event, targetElement);
           } else if (
@@ -194,6 +197,7 @@ class EventListener {
     let attributes_parent_parent = this.getElementAttributes(
       element.parentNode?.parentElement?.parentNode?.parentElement
     );
+
     // Dynamically redact sensitive attributes based on their content
     Object.keys(attributes).forEach((attr) => {
       if (attr === "value") {
@@ -216,33 +220,38 @@ class EventListener {
       }
     });
 
+    // Add XPath generation here
+    let index: number | undefined;
+    if (element.parentNode) {
+      const children = Array.from(element.parentNode.children);
+      index = children.indexOf(element) + 1; // XPath is 1-based index
+    }
+
     const eventData = {
       eventType: event?.type,
       timestamp: Date.now(),
-      tagName: element?.tagName ?? null,
+      tagName: element?.tagName?.toLowerCase() ?? null,
       attributes: attributes,
-      textContent: this.checkIfIsPIIDataAndClean(
-        element?.textContent?.trim() ?? ""
-      ),
+      textContent: element?.textContent?.trim() ?? "",
+      position: index, // Generate XPath including positional info
       pageUrl: window?.location?.href ?? "",
       sessionId: this.config?.sessionId ?? "",
       userId: this.config?.userId ?? "",
       parent: {
-        tagName: element.parentNode?.parentElement?.tagName ?? null,
+        tagName:
+          element.parentNode?.parentElement?.tagName.toLowerCase() ?? null,
         attributes: attributes_parent,
-        textContent: this.checkIfIsPIIDataAndClean(
-          element?.parentNode?.parentElement?.textContent?.trim() ?? ""
-        ),
+        textContent:
+          element?.parentNode?.parentElement?.textContent?.trim() ?? "",
       },
       parentOfParent: {
         tagName:
-          element?.parentNode?.parentElement?.parentNode?.parentElement
-            ?.tagName ?? null,
+          element?.parentNode?.parentElement?.parentNode?.parentElement?.tagName.toLowerCase() ??
+          null,
         attributes: attributes_parent_parent,
-        textContent: this.checkIfIsPIIDataAndClean(
+        textContent:
           element?.parentNode?.parentElement?.parentNode?.parentElement?.textContent?.trim() ??
-            ""
-        ),
+          "",
       },
     };
     return eventData;
