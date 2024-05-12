@@ -26,7 +26,9 @@ class EventListener {
     "SELECT",
     "TEXTAREA",
     "DIV",
-    "LI", // Include 'LI' as it requires special handling
+    "LI", // Include 'LI' as it requires special handling,
+    "OPTION",
+    "SELECT",
   ];
   private constructor(
     private config: EventListenerConfig,

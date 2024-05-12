@@ -19,6 +19,7 @@ class EventListener {
             "SELECT",
             "TEXTAREA",
             "DIV",
+            "LI",
         ];
         this.observer = new MutationObserver((mutations) => {
             var _a;
@@ -72,6 +73,7 @@ class EventListener {
         }
     }
     handlePageLoad() {
+        var _a, _b, _c, _d;
         const pageLoadData = {
             eventType: "pageLoad",
             timestamp: Date.now(),
@@ -79,6 +81,9 @@ class EventListener {
             tagName: null,
             attributes: {},
             textContent: "",
+            htmlSnapshot: document.documentElement.outerHTML,
+            userId: (_b = (_a = this.config) === null || _a === void 0 ? void 0 : _a.userId) !== null && _b !== void 0 ? _b : "",
+            sessionId: (_d = (_c = this.config) === null || _c === void 0 ? void 0 : _c.sessionId) !== null && _d !== void 0 ? _d : "",
         };
         this.eventQueue.push(pageLoadData);
     }
@@ -114,13 +119,13 @@ class EventListener {
             }
             setTimeout(() => {
                 if (this.isInteractable(targetElement)) {
-                    if (targetElement.tagName === "DIV" &&
+                    if ((targetElement === null || targetElement === void 0 ? void 0 : targetElement.tagName) === "DIV" &&
                         domChangedAfterInteraction &&
                         !this.checkIfParentHasInteractableChild(targetElement.childNodes)) {
                         this.eventQueue.push(eventData);
                     }
-                    else if (event.type === "input" &&
-                        targetElement.tagName === "INPUT") {
+                    else if ((event === null || event === void 0 ? void 0 : event.type) === "input" &&
+                        (targetElement === null || targetElement === void 0 ? void 0 : targetElement.tagName) === "INPUT") {
                         this.lastEvent = this.extractEventData(event, targetElement);
                     }
                     else if (!["DIV"].includes(targetElement.tagName) &&
@@ -140,7 +145,7 @@ class EventListener {
         }
     }
     extractEventData(event, element) {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2, _3, _4, _5, _6;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2, _3, _4, _5, _6, _7;
         if (!element) {
             return;
         }
@@ -165,24 +170,30 @@ class EventListener {
                 attributes_parent_parent[attr] = this.checkIfIsPIIDataAndClean(value);
             }
         });
+        let index;
+        if (element.parentNode) {
+            const children = Array.from(element.parentNode.children);
+            index = children.indexOf(element) + 1;
+        }
         const eventData = {
             eventType: event === null || event === void 0 ? void 0 : event.type,
             timestamp: Date.now(),
-            tagName: (_e = element === null || element === void 0 ? void 0 : element.tagName) !== null && _e !== void 0 ? _e : null,
+            tagName: (_f = (_e = element === null || element === void 0 ? void 0 : element.tagName) === null || _e === void 0 ? void 0 : _e.toLowerCase()) !== null && _f !== void 0 ? _f : null,
             attributes: attributes,
-            textContent: this.checkIfIsPIIDataAndClean((_g = (_f = element === null || element === void 0 ? void 0 : element.textContent) === null || _f === void 0 ? void 0 : _f.trim()) !== null && _g !== void 0 ? _g : ""),
-            pageUrl: (_j = (_h = window === null || window === void 0 ? void 0 : window.location) === null || _h === void 0 ? void 0 : _h.href) !== null && _j !== void 0 ? _j : "",
-            sessionId: (_l = (_k = this.config) === null || _k === void 0 ? void 0 : _k.sessionId) !== null && _l !== void 0 ? _l : "",
-            userId: (_o = (_m = this.config) === null || _m === void 0 ? void 0 : _m.userId) !== null && _o !== void 0 ? _o : "",
+            textContent: (_h = (_g = element === null || element === void 0 ? void 0 : element.textContent) === null || _g === void 0 ? void 0 : _g.trim()) !== null && _h !== void 0 ? _h : "",
+            position: index,
+            pageUrl: (_k = (_j = window === null || window === void 0 ? void 0 : window.location) === null || _j === void 0 ? void 0 : _j.href) !== null && _k !== void 0 ? _k : "",
+            sessionId: (_m = (_l = this.config) === null || _l === void 0 ? void 0 : _l.sessionId) !== null && _m !== void 0 ? _m : "",
+            userId: (_p = (_o = this.config) === null || _o === void 0 ? void 0 : _o.userId) !== null && _p !== void 0 ? _p : "",
             parent: {
-                tagName: (_r = (_q = (_p = element.parentNode) === null || _p === void 0 ? void 0 : _p.parentElement) === null || _q === void 0 ? void 0 : _q.tagName) !== null && _r !== void 0 ? _r : null,
+                tagName: (_s = (_r = (_q = element.parentNode) === null || _q === void 0 ? void 0 : _q.parentElement) === null || _r === void 0 ? void 0 : _r.tagName.toLowerCase()) !== null && _s !== void 0 ? _s : null,
                 attributes: attributes_parent,
-                textContent: this.checkIfIsPIIDataAndClean((_v = (_u = (_t = (_s = element === null || element === void 0 ? void 0 : element.parentNode) === null || _s === void 0 ? void 0 : _s.parentElement) === null || _t === void 0 ? void 0 : _t.textContent) === null || _u === void 0 ? void 0 : _u.trim()) !== null && _v !== void 0 ? _v : ""),
+                textContent: (_w = (_v = (_u = (_t = element === null || element === void 0 ? void 0 : element.parentNode) === null || _t === void 0 ? void 0 : _t.parentElement) === null || _u === void 0 ? void 0 : _u.textContent) === null || _v === void 0 ? void 0 : _v.trim()) !== null && _w !== void 0 ? _w : "",
             },
             parentOfParent: {
-                tagName: (_0 = (_z = (_y = (_x = (_w = element === null || element === void 0 ? void 0 : element.parentNode) === null || _w === void 0 ? void 0 : _w.parentElement) === null || _x === void 0 ? void 0 : _x.parentNode) === null || _y === void 0 ? void 0 : _y.parentElement) === null || _z === void 0 ? void 0 : _z.tagName) !== null && _0 !== void 0 ? _0 : null,
+                tagName: (_1 = (_0 = (_z = (_y = (_x = element === null || element === void 0 ? void 0 : element.parentNode) === null || _x === void 0 ? void 0 : _x.parentElement) === null || _y === void 0 ? void 0 : _y.parentNode) === null || _z === void 0 ? void 0 : _z.parentElement) === null || _0 === void 0 ? void 0 : _0.tagName.toLowerCase()) !== null && _1 !== void 0 ? _1 : null,
                 attributes: attributes_parent_parent,
-                textContent: this.checkIfIsPIIDataAndClean((_6 = (_5 = (_4 = (_3 = (_2 = (_1 = element === null || element === void 0 ? void 0 : element.parentNode) === null || _1 === void 0 ? void 0 : _1.parentElement) === null || _2 === void 0 ? void 0 : _2.parentNode) === null || _3 === void 0 ? void 0 : _3.parentElement) === null || _4 === void 0 ? void 0 : _4.textContent) === null || _5 === void 0 ? void 0 : _5.trim()) !== null && _6 !== void 0 ? _6 : ""),
+                textContent: (_7 = (_6 = (_5 = (_4 = (_3 = (_2 = element === null || element === void 0 ? void 0 : element.parentNode) === null || _2 === void 0 ? void 0 : _2.parentElement) === null || _3 === void 0 ? void 0 : _3.parentNode) === null || _4 === void 0 ? void 0 : _4.parentElement) === null || _5 === void 0 ? void 0 : _5.textContent) === null || _6 === void 0 ? void 0 : _6.trim()) !== null && _7 !== void 0 ? _7 : "",
             },
         };
         return eventData;
