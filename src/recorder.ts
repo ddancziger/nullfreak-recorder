@@ -56,17 +56,18 @@ function nullRecorder(
       console.error("Nullfreak: Missing apiKey");
       return;
     }
-    fetch(
-      `https://ohzzb0pmv7.execute-api.eu-west-2.amazonaws.com/prod/events/${completeConfig.companyId}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-api-key": completeConfig.apiKey,
-        },
-        body: JSON.stringify(eventsData),
-      }
-    )
+    let endpoint = `https://ohzzb0pmv7.execute-api.eu-west-2.amazonaws.com/prod/events/${completeConfig.companyId}`;
+    if (completeConfig.endpoint) {
+      endpoint = `${completeConfig.endpoint}/events/${completeConfig.companyId}`;
+    }
+    fetch(endpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": completeConfig.apiKey,
+      },
+      body: JSON.stringify(eventsData),
+    })
       .then((response) => {
         if (!response.ok) {
           return;

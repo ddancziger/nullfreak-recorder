@@ -20,6 +20,8 @@ class EventListener {
             "TEXTAREA",
             "DIV",
             "LI",
+            "OPTION",
+            "SELECT",
         ];
         this.observer = new MutationObserver((mutations) => {
             var _a;

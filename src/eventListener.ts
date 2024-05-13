@@ -138,13 +138,23 @@ class EventListener {
   }
   private handleEvent(event: Event): void {
     let targetElement = event?.target as HTMLElement;
+    // Check if the event target or any ancestor is within a Shadow DOM
+    const isInShadowDOM = (element: HTMLElement): boolean => {
+      while (element && element.parentNode) {
+        if (element.parentNode instanceof ShadowRoot) {
+          return true;
+        }
+        element = element.parentNode as HTMLElement;
+      }
+      return false;
+    };
+    const isShadow = isInShadowDOM(targetElement);
     targetElement = this.findInteractableParent(targetElement);
 
     if (targetElement) {
       lastInteractionTime = Date.now();
       domChangedAfterInteraction = false;
-      const eventData = this.extractEventData(event, targetElement);
-
+      const eventData = this.extractEventData(event, targetElement, isShadow);
       this.observer.observe(document.body, {
         childList: true,
         attributes: true,
@@ -167,7 +177,11 @@ class EventListener {
             event?.type === "input" &&
             targetElement?.tagName === "INPUT"
           ) {
-            this.lastEvent = this.extractEventData(event, targetElement);
+            this.lastEvent = this.extractEventData(
+              event,
+              targetElement,
+              isShadow
+            );
           } else if (
             !["DIV"].includes(targetElement.tagName) &&
             event.type != "input"
@@ -188,7 +202,11 @@ class EventListener {
     }
   }
 
-  private extractEventData(event: Event, element: HTMLElement) {
+  private extractEventData(
+    event: Event,
+    element: HTMLElement,
+    isInShadowDOM = false
+  ) {
     if (!element) {
       return;
     }
@@ -239,6 +257,7 @@ class EventListener {
       pageUrl: window?.location?.href ?? "",
       sessionId: this.config?.sessionId ?? "",
       userId: this.config?.userId ?? "",
+      isInShadowDOM,
       parent: {
         tagName:
           element.parentNode?.parentElement?.tagName.toLowerCase() ?? null,
