@@ -111,7 +111,7 @@ class EventListener {
       tagName: null,
       attributes: {},
       textContent: "",
-      htmlSnapshot: document.documentElement.outerHTML,
+      htmlSnapshot: "", //document.documentElement.outerHTML,
       userId: this.config?.userId ?? "",
       sessionId: this.config?.sessionId ?? "",
     };

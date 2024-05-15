@@ -105,11 +105,21 @@ class EventListener {
     }
     handleEvent(event) {
         let targetElement = event === null || event === void 0 ? void 0 : event.target;
+        const isInShadowDOM = (element) => {
+            while (element && element.parentNode) {
+                if (element.parentNode instanceof ShadowRoot) {
+                    return true;
+                }
+                element = element.parentNode;
+            }
+            return false;
+        };
+        const isShadow = isInShadowDOM(targetElement);
         targetElement = this.findInteractableParent(targetElement);
         if (targetElement) {
             lastInteractionTime = Date.now();
             domChangedAfterInteraction = false;
-            const eventData = this.extractEventData(event, targetElement);
+            const eventData = this.extractEventData(event, targetElement, isShadow);
             this.observer.observe(document.body, {
                 childList: true,
                 attributes: true,
@@ -128,7 +138,7 @@ class EventListener {
                     }
                     else if ((event === null || event === void 0 ? void 0 : event.type) === "input" &&
                         (targetElement === null || targetElement === void 0 ? void 0 : targetElement.tagName) === "INPUT") {
-                        this.lastEvent = this.extractEventData(event, targetElement);
+                        this.lastEvent = this.extractEventData(event, targetElement, isShadow);
                     }
                     else if (!["DIV"].includes(targetElement.tagName) &&
                         event.type != "input") {
@@ -146,7 +156,7 @@ class EventListener {
             }, 15000);
         }
     }
-    extractEventData(event, element) {
+    extractEventData(event, element, isInShadowDOM = false) {
         var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2, _3, _4, _5, _6, _7;
         if (!element) {
             return;
@@ -187,6 +197,7 @@ class EventListener {
             pageUrl: (_k = (_j = window === null || window === void 0 ? void 0 : window.location) === null || _j === void 0 ? void 0 : _j.href) !== null && _k !== void 0 ? _k : "",
             sessionId: (_m = (_l = this.config) === null || _l === void 0 ? void 0 : _l.sessionId) !== null && _m !== void 0 ? _m : "",
             userId: (_p = (_o = this.config) === null || _o === void 0 ? void 0 : _o.userId) !== null && _p !== void 0 ? _p : "",
+            isInShadowDOM,
             parent: {
                 tagName: (_s = (_r = (_q = element.parentNode) === null || _q === void 0 ? void 0 : _q.parentElement) === null || _r === void 0 ? void 0 : _r.tagName.toLowerCase()) !== null && _s !== void 0 ? _s : null,
                 attributes: attributes_parent,

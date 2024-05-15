@@ -56,7 +56,7 @@ function nullRecorder(
       console.error("Nullfreak: Missing apiKey");
       return;
     }
-    let endpoint = `https://ohzzb0pmv7.execute-api.eu-west-2.amazonaws.com/prod/events/${completeConfig.companyId}`;
+    let endpoint = `https://api.nullfreak.com/events/${completeConfig.companyId}`;
     if (completeConfig.endpoint) {
       endpoint = `${completeConfig.endpoint}/events/${completeConfig.companyId}`;
     }
