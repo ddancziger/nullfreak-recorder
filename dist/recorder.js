@@ -46,7 +46,6 @@ function nullRecorder(config) {
                 "X-Requested-With": "XMLHttpRequest",
             },
             body: JSON.stringify(eventsData),
-            credentials: "include",
             mode: "cors",
         })
             .then((response) => {
