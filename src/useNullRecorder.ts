@@ -1,14 +1,27 @@
 import { useEffect } from "react";
-let loadRecorder = null;
-export const useNullRecorder = (config: {
-  companyId: string;
-  apiKey: string;
-}) => {
+
+let loadRecorder: (() => Promise<void>) | null = null;
+
+export const useNullRecorder = (
+  config: {
+    companyId: string;
+    apiKey: string;
+    enabled: boolean;
+  } = {
+    companyId: "",
+    apiKey: "",
+    enabled: true,
+  }
+) => {
   useEffect(() => {
-    if (!loadRecorder) {
+    if (config.enabled && !loadRecorder) {
+      const nullRecorderConfig = {
+        companyId: config.companyId,
+        apiKey: config.apiKey,
+      };
       loadRecorder = async () => {
         const { nullRecorder } = await import("./recorder");
-        nullRecorder(config);
+        nullRecorder(nullRecorderConfig);
       };
 
       loadRecorder().catch(console.error);

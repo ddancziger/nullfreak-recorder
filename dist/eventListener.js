@@ -83,7 +83,7 @@ class EventListener {
             tagName: null,
             attributes: {},
             textContent: "",
-            htmlSnapshot: document.documentElement.outerHTML,
+            htmlSnapshot: "",
             userId: (_b = (_a = this.config) === null || _a === void 0 ? void 0 : _a.userId) !== null && _b !== void 0 ? _b : "",
             sessionId: (_d = (_c = this.config) === null || _c === void 0 ? void 0 : _c.sessionId) !== null && _d !== void 0 ? _d : "",
         };
