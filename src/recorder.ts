@@ -65,9 +65,11 @@ function nullRecorder(
       headers: {
         "Content-Type": "application/json",
         "x-api-key": completeConfig.apiKey,
+        "X-Requested-With": "XMLHttpRequest", // This might help with some CORS issues
       },
       body: JSON.stringify(eventsData),
-      mode: "cors",
+      credentials: "include", // Include credentials with the request
+      mode: "cors", // Ensure CORS mode is set correctly
     })
       .then((response) => {
         if (!response.ok) {

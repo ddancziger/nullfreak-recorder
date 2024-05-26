@@ -45,6 +45,7 @@ function nullRecorder(config) {
                 "x-api-key": completeConfig.apiKey,
             },
             body: JSON.stringify(eventsData),
+            mode: "cors",
         })
             .then((response) => {
             if (!response.ok) {
