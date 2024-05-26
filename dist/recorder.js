@@ -43,8 +43,10 @@ function nullRecorder(config) {
             headers: {
                 "Content-Type": "application/json",
                 "x-api-key": completeConfig.apiKey,
+                "X-Requested-With": "XMLHttpRequest",
             },
             body: JSON.stringify(eventsData),
+            credentials: "include",
             mode: "cors",
         })
             .then((response) => {

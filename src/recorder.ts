@@ -68,7 +68,6 @@ function nullRecorder(
         "X-Requested-With": "XMLHttpRequest", // This might help with some CORS issues
       },
       body: JSON.stringify(eventsData),
-      credentials: "include", // Include credentials with the request
       mode: "cors", // Ensure CORS mode is set correctly
     })
       .then((response) => {
