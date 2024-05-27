@@ -66,6 +66,7 @@ function nullRecorder(
         "Content-Type": "application/json",
         "x-api-key": completeConfig.apiKey,
         Accept: "*/*",
+        "Referrer-Policy": "strict-origin-when-cross-origin",
       },
       mode: "cors",
       body: JSON.stringify(eventsData),
